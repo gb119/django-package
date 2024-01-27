@@ -1,4 +1,4 @@
-{% set version = "3.2.20" %}
+{% set version = "4.2.9" %}
 
 package:
   name: django
@@ -6,24 +6,30 @@ package:
 
 source:
   url: https://pypi.io/packages/source/D/Django/Django-{{ version }}.tar.gz
-  sha256: dec2a116787b8e14962014bf78e120bba454135108e1af9e9b91ade7b2964c40
+  sha256: 12498cc3cb8bc8038539fef9e90e95f507502436c1f0c3a673411324fa675d14
 
 build:
   number: 0
   noarch: python
-  script: {{ PYTHON }} -m pip install . -vv
+  script:
+    # Don't need tzdata (pypi) pkg as the conda python package
+    # uses the tzdata (non-pypi) pkg
+    - sed -i.bak "/tzdata/d" setup.cfg
+    - {{ PYTHON }} -m pip install . -vv
   entry_points:
     - django-admin = django.core.management:execute_from_command_line
 
 requirements:
   host:
-    - python >=3.6
+    - python >=3.8
     - pip
   run:
-    - python >=3.6
-    - asgiref >=3.3.2,<4
-    - pytz
-    - sqlparse >=0.2.2
+    - python >=3.8
+    - asgiref >=3.6.0,<4
+    # Needs backports.zoneinfo only for py<39, but
+    # backports.zoneinfo conda package is empty for py>=39
+    - backports.zoneinfo
+    - sqlparse >=0.3.1
 
 test:
   requires:
