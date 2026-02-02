@@ -1,41 +1,38 @@
-{% set version = "4.2.19" %}
+{% set python_min = "3.11" %}
+{% set version = "5.2.10" %}
 
 package:
   name: django
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/D/Django/Django-{{ version }}.tar.gz
-  sha256: 6c833be4b0ca614f0a919472a1028a3bbdeb6f056fa04023aeb923346ba2c306
+  url: https://pypi.org/packages/source/D/Django/django-{{ version }}.tar.gz
+  sha256: 74df100784c288c50a2b5cad59631d71214f40f72051d5af3fdf220c20bdbbbe
 
 build:
   number: 0
   noarch: python
   script:
-    # Don't need tzdata (pypi) pkg as the conda python package
-    # uses the tzdata (non-pypi) pkg
-    - sed -i.bak "/tzdata/d" setup.cfg
-    - {{ PYTHON }} -m pip install . -vv
+    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
     - django-admin = django.core.management:execute_from_command_line
 
 requirements:
   host:
-    - python >=3.8
+    - python {{ python_min }}
+    - setuptools >=77.0.3
     - pip
   run:
-    - python >=3.8
-    - asgiref >=3.6.0,<4
-    # Needs backports.zoneinfo only for py<39, but
-    # backports.zoneinfo conda package is empty for py>=39
-    - backports.zoneinfo
-    - sqlparse >=0.3.1
+    - python >={{ python_min }}
+    - asgiref >=3.9.1
+    - sqlparse >=0.5.0
 
 test:
   requires:
     - pip
     # Test optional dependency.
     - psycopg2  # [not win]
+    - python {{ python_min }}
   imports:
     - django
     - django.apps
@@ -152,8 +149,6 @@ test:
     - django.contrib.sessions.management.commands
     - django.contrib.sessions.migrations
     - django.contrib.sitemaps
-    - django.contrib.sitemaps.management
-    - django.contrib.sitemaps.management.commands
     - django.contrib.sites
     - django.contrib.sites.migrations
     - django.contrib.staticfiles
