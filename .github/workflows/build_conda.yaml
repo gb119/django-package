@@ -31,4 +31,5 @@ jobs:
           python-version: "3.12"
           user: phygbu
           label: main
+          mambabuild: true
           token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
