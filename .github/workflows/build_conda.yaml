@@ -28,7 +28,6 @@ jobs:
         with:
           meta_yaml_dir: .
           overwrite: true
-          python-version: "3.12"
           user: phygbu
           label: main
           mambabuild: true
