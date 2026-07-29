@@ -28,7 +28,7 @@ jobs:
       - name: Build conda package
         run: |
           OUT_DIR="$(mktemp -d -t conda-dist-XXXXXXXXXX)"
-          conda-build . --no-anaconda-upload --output-folder "$OUT_DIR"
+          conda run -n build conda-build . --no-anaconda-upload --output-folder "$OUT_DIR"
           PACKAGE_FILE="$(find "$OUT_DIR" -type f \( -name "*.conda" -o -name "*.tar.bz2" \) | head -n 1)"
           if [ -z "$PACKAGE_FILE" ]; then
             echo "No built conda package found in $OUT_DIR"
@@ -36,4 +36,4 @@ jobs:
           fi
           echo "PACKAGE_FILE=$PACKAGE_FILE" >> "$GITHUB_ENV"
       - name: Upload conda package
-        run: anaconda -t "${{ secrets.ANACONDA }}" upload --user phygbu --label main --force "$PACKAGE_FILE"
+        run: conda run -n build anaconda -t "${{ secrets.ANACONDA }}" upload --user phygbu --label main --force "$PACKAGE_FILE"
